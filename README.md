@@ -1,0 +1,34 @@
+# AP Invoice Automation Engine
+
+A pipeline that takes a vendor invoice, extracts the data with OCR and an LLM, stores it in the client's chosen system, and prepares the bill for approval, so nobody retypes invoices into the ledger.
+
+> **Scope, stated plainly.** Built as a ready-to-deploy agency asset and an evolution of an earlier Xero draft-bill automation. It has been built and exercised on sample invoices; I have not published workflow exports or any client data here.
+
+## What it does
+
+1. An invoice arrives (a file dropped in Google Drive, or a webhook).
+2. **OCR plus Gemini** extract vendor, invoice number, dates, line items and totals into structured fields.
+3. The record is written to the destination the client uses: **PostgreSQL, Airtable or Xero**. The source PDF is attached.
+4. A **modular approval flow** decides who must approve before a draft bill is created. Approval rules are configured per client, not hard-coded.
+
+```mermaid
+flowchart LR
+    I[Invoice file / webhook] --> O[OCR + Gemini extraction]
+    O --> V{Validate fields}
+    V -- invalid --> X[Review queue]
+    V -- ok --> A[Approval flow, per-client rules]
+    A --> D1[(PostgreSQL)]
+    A --> D2[(Airtable)]
+    A --> D3[Xero draft bill]
+```
+
+## Design choices
+
+- **Multi-destination.** The same extraction feeds Xero, Postgres or Airtable, so one build serves clients with different systems.
+- **Draft, not final.** Bills reach the ledger as drafts that a person approves.
+- **Modular approvals.** Thresholds and approvers are configuration, so a client can change them without a rebuild.
+- **Keep the evidence.** The original PDF stays attached to the record.
+
+## Stack
+
+n8n, Make.com, Google Drive API, Gemini (OCR and extraction), PostgreSQL, Airtable, Xero API, webhooks
