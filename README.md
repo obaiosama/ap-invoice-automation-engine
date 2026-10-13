@@ -4,12 +4,7 @@ A pipeline that takes a vendor invoice, extracts the data with OCR and an LLM, s
 
 It grew out of an earlier Xero draft-bill automation and was rebuilt as a multi-destination engine that one build can serve for clients with different accounting setups.
 
-## What it does
-
-1. An invoice arrives (a file dropped in Google Drive, or a webhook).
-2. **OCR plus Gemini** extract vendor, invoice number, dates, line items and totals into structured fields.
-3. The record is written to the destination the client uses: **PostgreSQL, Airtable or Xero**. The source PDF is attached.
-4. A **modular approval flow** decides who must approve before a draft bill is created. Approval rules are configured per client, not hard-coded.
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -22,6 +17,13 @@ flowchart LR
     A --> D3[Xero draft bill]
 ```
 
+## What it does
+
+1. An invoice arrives (a file dropped in Google Drive, or a webhook).
+2. **OCR plus Gemini** extract vendor, invoice number, dates, line items and totals into structured fields.
+3. The record is written to the destination the client uses: **PostgreSQL, Airtable or Xero**. The source PDF is attached.
+4. A **modular approval flow** decides who must approve before a draft bill is created. Approval rules are configured per client, not hard-coded.
+
 ## Design choices
 
 - **Multi-destination.** The same extraction feeds Xero, Postgres or Airtable, so one build serves clients with different systems.
@@ -31,4 +33,9 @@ flowchart LR
 
 ## Stack
 
-n8n, Make.com, Google Drive API, Gemini (OCR and extraction), PostgreSQL, Airtable, Xero API, webhooks
+| Layer | Tools |
+|---|---|
+| Orchestration | n8n, Make.com |
+| Intake | Google Drive API, webhooks |
+| Extraction | Gemini (OCR and structured extraction) |
+| Destinations | PostgreSQL, Airtable, Xero API |
