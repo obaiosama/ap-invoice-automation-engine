@@ -2,7 +2,7 @@
 
 A pipeline that takes a vendor invoice, extracts the data with OCR and an LLM, stores it in the client's chosen system, and prepares the bill for approval, so nobody retypes invoices into the ledger.
 
-> **Scope, stated plainly.** Built as a ready-to-deploy agency asset and an evolution of an earlier Xero draft-bill automation. It has been built and exercised on sample invoices; I have not published workflow exports or any client data here.
+It grew out of an earlier Xero draft-bill automation and was rebuilt as a multi-destination engine that one build can serve for clients with different accounting setups.
 
 ## What it does
 
